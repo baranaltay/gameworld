@@ -24,7 +24,7 @@ sideObject.width = 50;
 sideObject.height = 10;
 sideObject.originX = sideObject.x;
 sideObject.originY = sideObject.y;
-sideObject.radian = Math.radians(180);
+sideObject.radian = Math.radians(0);
 
 var irrelevantObject = new GameWorldBARectangle();
 irrelevantObject.x = 40;
@@ -89,7 +89,7 @@ window.onload = function () {
 		sideEl.style.left = sideObject.x + 'px';
 		sideEl.style.top = sideObject.y + 'px';
 
-		var mytest = sideObject.intersectByRectangle(mainObject);
+		var mytest = mainObject.intersectByRectangle(sideObject);
 		mainEl.style.borderColor = 'black';
 		if (mytest) {
 			mainEl.style.borderColor = 'red';

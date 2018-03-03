@@ -70,23 +70,31 @@ abstract class GameWorldBAMathLibrary {
 			x: rectangle.originX,
 			y: rectangle.originY
 		};
+		var rectanglePoint1 = this.getPointByRadian(originRectangle, {
+			x: +rectangle.x,
+			y: +rectangle.y
+		}, rectangle.radian);
+
+		var rectanglePoint2 = this.getPointByRadian(originRectangle, {
+			x: +rectangle.x + +rectangle.width,
+			y: +rectangle.y
+		}, rectangle.radian);
+
+		var rectanglePoint3 = this.getPointByRadian(originRectangle, {
+			x: +rectangle.x,
+			y: +rectangle.y + +rectangle.height
+		}, rectangle.radian);
+
+		var rectanglePoint4 = this.getPointByRadian(originRectangle, {
+			x: +rectangle.x + +rectangle.width,
+			y: +rectangle.y + +rectangle.height
+		}, rectangle.radian);
+
 		var state1 = this.intersectPointByVectors(point,
-			this.getPointByRadian(originRectangle, {
-				x: +rectangle.x,
-				y: +rectangle.y
-			}, rectangle.radian),
-			this.getPointByRadian(originRectangle, {
-				x: +rectangle.x + +rectangle.width,
-				y: +rectangle.y
-			}, rectangle.radian),
-			this.getPointByRadian(originRectangle, {
-				x: +rectangle.x,
-				y: +rectangle.y + +rectangle.height
-			}, rectangle.radian),
-			this.getPointByRadian(originRectangle, {
-				x: +rectangle.x + +rectangle.width,
-				y: +rectangle.y + +rectangle.height
-			}, rectangle.radian),
+			rectanglePoint1,
+			rectanglePoint2,
+			rectanglePoint3,
+			rectanglePoint4,
 			rectangle.height
 		);
 		var state2 = this.intersectPointByVectors(point,
@@ -123,51 +131,75 @@ abstract class GameWorldBAMathLibrary {
 			x: rectangle2.originX,
 			y: rectangle2.originY
 		};
-		var state1 = this.intersectPointByRectangle(
-			this.getPointByRadian(originRectangle1, {
-				x: rectangle1.x,
-				y: rectangle1.y
-			}, rectangle1.radian), rectangle2);
-		var state2 = this.intersectPointByRectangle(
-			this.getPointByRadian(originRectangle1, {
-				x: +rectangle1.x + +rectangle1.width,
-				y: rectangle1.y
-			}, rectangle1.radian), rectangle2);
-		var state3 = this.intersectPointByRectangle(
-			this.getPointByRadian(originRectangle1, {
-				x: rectangle1.x,
-				y: +rectangle1.y + +rectangle1.height
-			}, rectangle1.radian), rectangle2);
-		var state4 = this.intersectPointByRectangle(
-			this.getPointByRadian(originRectangle1, {
-				x: +rectangle1.x + +rectangle1.width,
-				y: +rectangle1.y + +rectangle1.height
-			}, rectangle1.radian), rectangle2);
 
+		var rectangle1Point1 = this.getPointByRadian(originRectangle1, {
+			x: rectangle1.x,
+			y: rectangle1.y
+		}, rectangle1.radian);
+
+		var rectangle1Point2 = this.getPointByRadian(originRectangle1, {
+			x: +rectangle1.x + +rectangle1.width,
+			y: rectangle1.y
+		}, rectangle1.radian);
+
+		var rectangle1Point3 = this.getPointByRadian(originRectangle1, {
+			x: rectangle1.x,
+			y: +rectangle1.y + +rectangle1.height
+		}, rectangle1.radian);
+
+		var rectangle1Point4 = this.getPointByRadian(originRectangle1, {
+			x: +rectangle1.x + +rectangle1.width,
+			y: +rectangle1.y + +rectangle1.height
+		}, rectangle1.radian);
+
+		var state1 = this.intersectPointByRectangle(
+			rectangle1Point1, rectangle2);
+
+		var state2 = this.intersectPointByRectangle(
+			rectangle1Point2, rectangle2);
+
+		var state3 = this.intersectPointByRectangle(
+			rectangle1Point3, rectangle2);
+
+		var state4 = this.intersectPointByRectangle(
+			rectangle1Point4, rectangle2);
+
+		var rectangle2Point1 = this.getPointByRadian(originRectangle2, {
+			x: rectangle2.x,
+			y: rectangle2.y
+		}, rectangle2.radian);
+
+		var rectangle2Point2 = this.getPointByRadian(originRectangle2, {
+			x: +rectangle2.x + +rectangle2.width,
+			y: rectangle2.y
+		}, rectangle2.radian);
+
+		var rectangle2Point3 = this.getPointByRadian(originRectangle2, {
+			x: rectangle2.x,
+			y: +rectangle2.y + +rectangle2.height
+		}, rectangle2.radian);
+
+		var rectangle2Point4 = this.getPointByRadian(originRectangle2, {
+			x: +rectangle2.x + +rectangle2.width,
+			y: +rectangle2.y + +rectangle2.height
+		}, rectangle2.radian);
 
 		var state5 = this.intersectPointByRectangle(
-			this.getPointByRadian(originRectangle2, {
-				x: rectangle2.x,
-				y: rectangle2.y
-			}, rectangle2.radian), rectangle1);
-		var state6 = this.intersectPointByRectangle(
-			this.getPointByRadian(originRectangle2, {
-				x: +rectangle2.x + +rectangle2.width,
-				y: rectangle2.y
-			}, rectangle2.radian), rectangle1);
-		var state7 = this.intersectPointByRectangle(
-			this.getPointByRadian(originRectangle2, {
-				x: rectangle2.x,
-				y: +rectangle2.y + +rectangle2.height
-			}, rectangle2.radian), rectangle1);
-		var state8 = this.intersectPointByRectangle(
-			this.getPointByRadian(originRectangle2, {
-				x: +rectangle2.x + +rectangle2.width,
-				y: +rectangle2.y + +rectangle2.height
-			}, rectangle2.radian), rectangle1);
+			rectangle2Point1, rectangle1);
 
-			return state1 || state2 || state3 || state4 ||
-			   state5 || state6 || state7 || state8;
+		var state6 = this.intersectPointByRectangle(
+			rectangle2Point2, rectangle1);
+
+		var state7 = this.intersectPointByRectangle(
+			rectangle2Point3, rectangle1);
+
+		var state8 = this.intersectPointByRectangle(
+			rectangle2Point4, rectangle1);
+
+		var intersectByPoint = state1 || state2 || state3 || state4 ||
+			state5 || state6 || state7 || state8;
+
+		return intersectByPoint;
 	}
 	//#endregion
 	public static getPointByRadian(
