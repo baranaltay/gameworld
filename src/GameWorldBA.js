@@ -11,9 +11,6 @@ var GameWorldBAColliderBase = /** @class */ (function () {
 var GameWorldBAMathLibrary = /** @class */ (function () {
     function GameWorldBAMathLibrary() {
     }
-    //#region CalculateByCoordianateSystem
-    //#endregion
-    //#region Intersect
     GameWorldBAMathLibrary.intersectPointByVectors = function (point, vector1P1, vector1P2, vector2P1, vector2P2, distanceVectors) {
         var distanceByVector1 = this.getDistanceByPointToVector(point, vector1P1, vector1P2);
         var distanceByVector2 = this.getDistanceByPointToVector(point, vector2P1, vector2P2);
@@ -109,7 +106,49 @@ var GameWorldBAMathLibrary = /** @class */ (function () {
             state5 || state6 || state7 || state8;
         return intersectByPoint;
     };
-    //#endregion
+    GameWorldBAMathLibrary.intersectRectangleByCircle = function (rectangle, circle) {
+        var originRectangle = {
+            x: rectangle.originX,
+            y: rectangle.originY
+        };
+        var rectanglePoint1 = this.getPointByRadian(originRectangle, {
+            x: rectangle.x,
+            y: rectangle.y
+        }, rectangle.radian);
+        var rectanglePoint2 = this.getPointByRadian(originRectangle, {
+            x: +rectangle.x + +rectangle.width,
+            y: rectangle.y
+        }, rectangle.radian);
+        var rectanglePoint3 = this.getPointByRadian(originRectangle, {
+            x: rectangle.x,
+            y: +rectangle.y + +rectangle.height
+        }, rectangle.radian);
+        var rectanglePoint4 = this.getPointByRadian(originRectangle, {
+            x: +rectangle.x + +rectangle.width,
+            y: +rectangle.y + +rectangle.height
+        }, rectangle.radian);
+        var distance__RectangleBorder1_CircleCenter = this.getDistanceByPointToVector({
+            x: +circle.x,
+            y: +circle.y
+        }, rectanglePoint1, rectanglePoint3);
+        var distance__RectangleBorder2_CircleCenter = this.getDistanceByPointToVector({
+            x: +circle.x,
+            y: +circle.y
+        }, rectanglePoint1, rectanglePoint2);
+        var distance__RectangleBorder3_CircleCenter = this.getDistanceByPointToVector({
+            x: +circle.x,
+            y: +circle.y
+        }, rectanglePoint2, rectanglePoint4);
+        var distance__RectangleBorder4_CircleCenter = this.getDistanceByPointToVector({
+            x: +circle.x,
+            y: +circle.y
+        }, rectanglePoint3, rectanglePoint4);
+        var state1 = +distance__RectangleBorder1_CircleCenter <= +circle.radius + 0.1;
+        var state2 = +distance__RectangleBorder2_CircleCenter <= +circle.radius + 0.1;
+        var state3 = +distance__RectangleBorder3_CircleCenter <= +circle.radius + 0.1;
+        var state4 = +distance__RectangleBorder4_CircleCenter <= +circle.radius + 0.1;
+        return state1 || state2 || state3 || state4;
+    };
     GameWorldBAMathLibrary.getPointByRadian = function (origin, point, radian) {
         var pointByOrigin = {
             x: +point.x - +origin.x,
@@ -124,22 +163,36 @@ var GameWorldBAMathLibrary = /** @class */ (function () {
         };
         return returnObject;
     };
+    // Converts from degrees to radians.
+    GameWorldBAMathLibrary.getRadianFromDegree = function (degrees) {
+        return degrees * Math.PI / 180;
+    };
+    ;
+    // Converts from radians to degrees.
+    GameWorldBAMathLibrary.getDegreeFromRadian = function (radians) {
+        return radians * 180 / Math.PI;
+    };
+    ;
     GameWorldBAMathLibrary.getDistanceByPointToVector = function (point, vectorP1, vectorP2) {
-        var point1 = vectorP1;
-        var point2 = {
-            x: +vectorP2.x - +point1.x,
-            y: +vectorP2.y - +point1.y
+        var a_to_p = [+point.x - +vectorP1.x, +point.y - +vectorP1.y]; // Storing vector A -> P
+        var a_to_b = [+vectorP2.x - +vectorP1.x, +vectorP2.y - +vectorP1.y]; // Storing vector A -> B
+        var atb2 = Math.pow(a_to_b[0], 2) + Math.pow(a_to_b[1], 2); // ** 2 means "squared"
+        //   Basically finding the squared magnitude
+        //   of a_to_b
+        var atp_dot_atb = a_to_p[0] * a_to_b[0] + a_to_p[1] * a_to_b[1];
+        // The dot product of a_to_p and a_to_b
+        var t = atp_dot_atb / atb2; // The normalized "distance" from a to
+        //   your closest point
+        var shortestPoint = {
+            x: +vectorP1.x + a_to_b[0] * t,
+            y: +vectorP1.y + a_to_b[1] * t
         };
-        var point3 = {
-            x: +point.x - +point1.x,
-            y: +point.y - +point1.y
+        var differentPoint = {
+            x: +shortestPoint.x - +point.x,
+            y: +shortestPoint.y - +point.y
         };
-        var beta = Math.atan2(+point2.y, +point2.x);
-        var teta = Math.atan2(+point3.y, +point3.x);
-        var alpha = teta - beta;
-        var distance__a_c = Math.sqrt((+point3.x * +point3.x) + (+point3.y * +point3.y));
-        var height = Math.sin(alpha) * distance__a_c;
-        return Math.abs(height);
+        var distance = Math.sqrt((Math.pow(differentPoint.x, 2)) + (Math.pow(differentPoint.y, 2)));
+        return distance;
     };
     return GameWorldBAMathLibrary;
 }());
@@ -150,7 +203,7 @@ var GameWorldBARectangle = /** @class */ (function () {
         return GameWorldBAMathLibrary.intersectRectangleByRectangle(this, rectangle);
     };
     GameWorldBARectangle.prototype.intersectByCircle = function (circle) {
-        throw new Error("Method not implemented.");
+        return GameWorldBAMathLibrary.intersectRectangleByCircle(this, circle);
     };
     return GameWorldBARectangle;
 }());

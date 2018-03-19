@@ -44,11 +44,6 @@ abstract class GameWorldBAColliderBase implements IGameWorldBAUnique, IGameWorld
 	private _acceleration: Number;
 }
 abstract class GameWorldBAMathLibrary {
-	//#region CalculateByCoordianateSystem
-
-	//#endregion
-
-	//#region Intersect
 	public static intersectPointByVectors(
 		point: IGameWorldBAPoint,
 		vector1P1: IGameWorldBAPoint,
@@ -201,7 +196,77 @@ abstract class GameWorldBAMathLibrary {
 
 		return intersectByPoint;
 	}
-	//#endregion
+
+	public static intersectRectangleByCircle(
+		rectangle: IGameWorldBARectangle,
+		circle: IGameWorldBACircle
+	): Boolean {
+		var originRectangle: IGameWorldBAPoint = {
+			x: rectangle.originX,
+			y: rectangle.originY
+		};
+
+		var rectanglePoint1 = this.getPointByRadian(originRectangle, {
+			x: rectangle.x,
+			y: rectangle.y
+		}, rectangle.radian);
+
+		var rectanglePoint2 = this.getPointByRadian(originRectangle, {
+			x: +rectangle.x + +rectangle.width,
+			y: rectangle.y
+		}, rectangle.radian);
+
+		var rectanglePoint3 = this.getPointByRadian(originRectangle, {
+			x: rectangle.x,
+			y: +rectangle.y + +rectangle.height
+		}, rectangle.radian);
+
+		var rectanglePoint4 = this.getPointByRadian(originRectangle, {
+			x: +rectangle.x + +rectangle.width,
+			y: +rectangle.y + +rectangle.height
+		}, rectangle.radian);
+
+		var distance__RectangleBorder1_CircleCenter = this.getDistanceByPointToVector(
+			{
+				x: +circle.x,
+				y: +circle.y
+			},
+			rectanglePoint1,
+			rectanglePoint3
+		);
+		var distance__RectangleBorder2_CircleCenter = this.getDistanceByPointToVector(
+			{
+				x: +circle.x,
+				y: +circle.y
+			},
+			rectanglePoint1,
+			rectanglePoint2
+		);
+		var distance__RectangleBorder3_CircleCenter = this.getDistanceByPointToVector(
+			{
+				x: +circle.x,
+				y: +circle.y
+			},
+			rectanglePoint2,
+			rectanglePoint4
+		);
+		var distance__RectangleBorder4_CircleCenter = this.getDistanceByPointToVector(
+			{
+				x: +circle.x,
+				y: +circle.y
+			},
+			rectanglePoint3,
+			rectanglePoint4
+		);
+
+		var state1 = +distance__RectangleBorder1_CircleCenter <= +circle.radius + 0.1;
+		var state2 = +distance__RectangleBorder2_CircleCenter <= +circle.radius + 0.1;
+		var state3 = +distance__RectangleBorder3_CircleCenter <= +circle.radius + 0.1;
+		var state4 = +distance__RectangleBorder4_CircleCenter <= +circle.radius + 0.1;
+
+		return state1 ||  state2 || state3 ||  state4;
+	}
+
 	public static getPointByRadian(
 		origin: IGameWorldBAPoint,
 		point: IGameWorldBAPoint,
@@ -223,33 +288,46 @@ abstract class GameWorldBAMathLibrary {
 		};
 		return returnObject;
 	}
+
+	// Converts from degrees to radians.
+	public static getRadianFromDegree (degrees) {
+		return degrees * Math.PI / 180;
+	};
+
+	// Converts from radians to degrees.
+	public static getDegreeFromRadian(radians) {
+		return radians * 180 / Math.PI;
+	};
+
 	public static getDistanceByPointToVector(
 		point: IGameWorldBAPoint,
 		vectorP1: IGameWorldBAPoint,
 		vectorP2: IGameWorldBAPoint
 	): Number {
-		var point1 = vectorP1;
-		var point2: IGameWorldBAPoint = {
-			x: +vectorP2.x - +point1.x,
-			y: +vectorP2.y - +point1.y
-		};
+		var a_to_p = [+point.x - +vectorP1.x, +point.y - +vectorP1.y]     // Storing vector A -> P
+		var a_to_b = [+vectorP2.x - +vectorP1.x, +vectorP2.y - +vectorP1.y]     // Storing vector A -> B
 
-		var point3: IGameWorldBAPoint = {
-			x: +point.x - +point1.x,
-			y: +point.y - +point1.y
-		};
+		var atb2 = a_to_b[0] ** 2 + a_to_b[1] ** 2  // ** 2 means "squared"
+		//   Basically finding the squared magnitude
+		//   of a_to_b
 
-		var beta = Math.atan2(+point2.y, +point2.x);
+		var atp_dot_atb = a_to_p[0] * a_to_b[0] + a_to_p[1] * a_to_b[1]
+		// The dot product of a_to_p and a_to_b
 
-		var teta = Math.atan2(+point3.y, +point3.x);
+		var t = atp_dot_atb / atb2              // The normalized "distance" from a to
+		//   your closest point
+		var shortestPoint = {
+			x: +vectorP1.x + a_to_b[0] * t,
+			y: +vectorP1.y + a_to_b[1] * t
+		}
+		var differentPoint = {
+			x: +shortestPoint.x - +point.x,
+			y: +shortestPoint.y - +point.y
+		}
 
-		var alpha = teta - beta;
+		var distance = Math.sqrt((differentPoint.x ** 2) + (differentPoint.y ** 2));
 
-		var distance__a_c = Math.sqrt((+point3.x * +point3.x) + (+point3.y * +point3.y));
-
-		var height = Math.sin(alpha) * distance__a_c;
-
-		return Math.abs(height);
+		return distance;
 	}
 }
 class GameWorldBARectangle implements IGameWorldBARectangle, IGameWorldBAIntersect {
@@ -264,7 +342,7 @@ class GameWorldBARectangle implements IGameWorldBARectangle, IGameWorldBAInterse
 		return GameWorldBAMathLibrary.intersectRectangleByRectangle(this, rectangle);
 	}
 	intersectByCircle(circle: IGameWorldBACircle): Boolean {
-		throw new Error("Method not implemented.");
+		return GameWorldBAMathLibrary.intersectRectangleByCircle(this, circle);
 	}
 }
 class GameWorldBACircle implements IGameWorldBACircle, IGameWorldBAIntersect {
@@ -278,3 +356,4 @@ class GameWorldBACircle implements IGameWorldBACircle, IGameWorldBAIntersect {
 		throw new Error("Method not implemented.");
 	}
 }
+

@@ -8,14 +8,10 @@ Math.degrees = function (radians) {
 	return radians * 180 / Math.PI;
 };
 
-var mainObject = new GameWorldBARectangle();
+var mainObject = new GameWorldBACircle();
 mainObject.x = 20;
 mainObject.y = 20;
-mainObject.width = 30;
-mainObject.height = 50;
-mainObject.originX = mainObject.x + (mainObject.width / 2);
-mainObject.originY = mainObject.y + (mainObject.height / 2);
-mainObject.radian = Math.radians(0);
+mainObject.radius = 30;
 
 var sideObject = new GameWorldBARectangle();
 sideObject.x = 40;
@@ -40,12 +36,12 @@ window.onload = function () {
 	var sideEl = document.getElementById('sideObject');
 	var irrelevantEl = document.getElementById('irrelevantObject');
 
-	mainEl.style.width = mainObject.width + 'px';
-	mainEl.style.height = mainObject.height + 'px';
+	mainEl.style.width = mainObject.radius + 'px';
+	mainEl.style.height = mainObject.radius + 'px';
 	mainEl.style.left = mainObject.x + 'px';
 	mainEl.style.top = mainObject.y + 'px';
-	mainEl.style.transformOrigin = (mainObject.originX - mainObject.x) + 'px ' + (mainObject.originY - mainObject.y) + 'px';
-	mainEl.style.transform = 'rotateZ(' + Math.degrees(mainObject.radian) + 'deg)';
+	// mainEl.style.transformOrigin = (mainObject.originX - mainObject.x) + 'px ' + (mainObject.originY - mainObject.y) + 'px';
+	// mainEl.style.transform = 'rotateZ(' + Math.degrees(mainObject.radian) + 'deg)';
 
 	sideEl.style.width = sideObject.width + 'px';
 	sideEl.style.height = sideObject.height + 'px';
@@ -89,7 +85,7 @@ window.onload = function () {
 		sideEl.style.left = sideObject.x + 'px';
 		sideEl.style.top = sideObject.y + 'px';
 
-		var mytest = mainObject.intersectByRectangle(sideObject);
+		var mytest = sideObject.intersectByCircle(mainObject);
 		mainEl.style.borderColor = 'black';
 		if (mytest) {
 			mainEl.style.borderColor = 'red';
