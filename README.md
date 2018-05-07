@@ -1,4 +1,4 @@
-# client
+# schoolproject
 
 > A Vue.js project
 

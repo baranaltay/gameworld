@@ -1,5 +1,5 @@
 {
-  "name": "client",
+  "name": "schoolproject",
   "version": "1.0.0",
   "description": "A Vue.js project",
   "author": "Baran Altay <baran.altay@kripton.co>",
@@ -10,11 +10,9 @@
     "build": "node build/build.js"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "matter-js": "^0.14.1",
     "vue": "^2.5.2",
-    "vue-router": "^3.0.1",
-    "vue-sweetalert2": "^1.2.4",
-    "vuetify": "^1.0.0"
+    "vue-router": "^3.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
